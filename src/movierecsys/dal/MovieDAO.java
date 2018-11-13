@@ -20,7 +20,7 @@ import movierecsys.be.Movie;
  */
 public class MovieDAO
 {
-    //tester123
+    //tester1234
     private static final String MOVIE_SOURCE = "data/movie_titles.txt";
 
     /**
