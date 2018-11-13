@@ -9,6 +9,7 @@ import java.util.List;
 import movierecsys.be.Movie;
 import movierecsys.be.Rating;
 import movierecsys.be.User;
+import movierecsys.bll.exception.MovieRecSysException;
 
 /**
  *
@@ -23,6 +24,8 @@ public interface OwsLogicFacade
      * @return Users ratings.
      */
     List<Rating> getRecommendedMovies(User user);
+    
+    List<Movie> getAllMovies() throws MovieRecSysException;
 
     /**
      * Gets a list of all movies sorted by their rating.

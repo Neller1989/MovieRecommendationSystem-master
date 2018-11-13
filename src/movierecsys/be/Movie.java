@@ -47,7 +47,11 @@ public class Movie
     {
         this.year = year;
     }
-    
-    
+
+    @Override
+    public String toString()
+    {
+        return "ID: "+id+", Title: "+title+", Release Year: "+year+" (Movie)";
+    }
 
 }
