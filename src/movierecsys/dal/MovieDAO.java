@@ -6,10 +6,14 @@
 package movierecsys.dal;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import movierecsys.be.Movie;
@@ -20,6 +24,7 @@ import movierecsys.be.Movie;
  */
 public class MovieDAO
 {
+
     //tester1234
     private static final String MOVIE_SOURCE = "data/movie_titles.txt";
 
@@ -80,11 +85,47 @@ public class MovieDAO
      * @return The object representation of the movie added to the persistence
      * storage.
      */
-    private Movie createMovie(int releaseYear, String title)
+    public Movie createMovie(int releaseYear, String title) throws IOException
     {
+        Path path = new File(MOVIE_SOURCE).toPath();
+        int id = 1;
+        try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.SYNC, StandardOpenOption.APPEND, StandardOpenOption.WRITE))
+        {
+            bw.write(releaseYear + "," + title);
+        }
         //TODO Create movie.
-        return null;
+        return Movie(id, releaseYear, title);
     }
+
+    /**
+     * Gets the lowest available id from the movie source file.
+     * @return lowest available id
+     */
+//    public int getNextAvailableId()
+//    {
+//        int availableId = 0;
+//        int lastCounted = -1;
+//        
+//        
+//        
+//        for (int i = 0; i < members.size(); i++)
+//        {
+//            if (availableId != 0 && members.get(i).getId() == members.size() - 1)
+//            {
+//                return availableId;
+//            } else if (availableId < members.get(i).getId() && members.get(i).getId() - 1 != lastCounted)
+//            {
+//                availableId = members.get(i).getId() - 1;
+//                return availableId;
+//            } else if (availableId == 0 && members.get(i).getId() == members.size() - 1)
+//            {
+//                availableId = members.size();
+//            } 
+//            lastCounted = members.get(i).getId();   
+//        }
+//        return availableId;
+//        return 123456;
+//    }
 
     /**
      * Deletes a movie from the persistence storage.
