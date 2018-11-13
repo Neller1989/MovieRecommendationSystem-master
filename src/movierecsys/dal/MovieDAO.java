@@ -14,11 +14,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import movierecsys.be.Movie;
 
 /**
@@ -138,10 +140,35 @@ public class MovieDAO
      * Deletes a movie from the persistence storage.
      *
      * @param movie The movie to delete.
+     * @throws java.io.IOException
      */
-    private void deleteMovie(Movie movie)
+    public void deleteMovie(Movie movie) throws IOException
     {
-        //TODO Delete movie
+        File inputFile = new File("data/movie_titles.txt");
+        File tempFile = new File("data/temp_titles.txt");
+
+        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+        
+        Movie dMovie = movie;
+        String dTitle = dMovie.getTitle();
+        String dRelease = Integer.toString(dMovie.getYear());
+        String dId = Integer.toString(dMovie.getId());
+
+        String lineToRemove = ""+dId+","+dRelease+","+dTitle;
+        String currentLine;
+
+        while((currentLine = reader.readLine()) != null) {
+    // trim newline when comparing with lineToRemove
+        String trimmedLine = currentLine.trim();
+        if(trimmedLine.equals(lineToRemove)) continue;
+        writer.write(currentLine + System.getProperty("line.separator"));
+}
+        writer.close(); 
+        reader.close(); 
+        
+        inputFile.delete();
+        tempFile.renameTo(inputFile);
     }
 
     /**

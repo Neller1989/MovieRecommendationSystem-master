@@ -34,16 +34,21 @@ public class FileReaderTester
     public static void main(String[] args) throws IOException
     {
         MovieDAO movieDao = new MovieDAO();
-        movieDao.createMovie(2222, "Test Movie");
-        movieDao.createMovie(2223, "Virker vores");
-        movieDao.createMovie(2224, "getNextAvailableId method?");       
+//        movieDao.createMovie(2222, "Test Movie");
+//        movieDao.createMovie(2223, "Virker vores");
+//        movieDao.createMovie(2224, "getNextAvailableId method?");       
         List<Movie> allMovs = movieDao.getAllMovies();
+        movieDao.deleteMovie(new Movie(17773, 2224, "getNextAvailableId method?"));
+
         for (Movie allMov : allMovs)
         {
             System.out.println(allMov.getTitle());
         }
         System.out.println("Movie count: " + allMovs.size());
         System.out.println("next id " +movieDao.getNextAvailableId());
+        
+
+//        System.out.println("Movie count: " + allMovs.size());
     }
     
    
