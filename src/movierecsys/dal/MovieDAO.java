@@ -19,6 +19,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 import movierecsys.be.Movie;
@@ -100,13 +101,15 @@ public class MovieDAO
         {
             id = getNextAvailableId();
             bw.newLine();
-            bw.write(id+","+releaseYear + "," + title);
+            bw.write(id + "," + releaseYear + "," + title);
         }
+        sortMovies();
         return new Movie(id, releaseYear, title);
     }
 
     /**
      * Gets the lowest available id from the movie source file.
+     *
      * @return lowest available id
      * @throws java.io.IOException
      */
@@ -114,11 +117,15 @@ public class MovieDAO
     {
         int availableId = 1;
         int lastCounted = 0;
-        
+
         List<Movie> allMoviesNextId = getAllMovies();
-        
+
         for (int i = 0; i < allMoviesNextId.size(); i++)
         {
+            if (availableId == allMoviesNextId.get(i).getId())
+            {
+                availableId = 1;
+            }
             if (availableId != 1 && allMoviesNextId.get(i).getId() == allMoviesNextId.size() - 1)
             {
                 return availableId;
@@ -126,12 +133,12 @@ public class MovieDAO
             {
                 availableId = allMoviesNextId.get(i).getId() - 1;
                 return availableId;
-            } else if (availableId == 1 && allMoviesNextId.get(i).getId() == allMoviesNextId.size() - 1)
+            } else if (availableId == 1 && allMoviesNextId.get(i).getId() == allMoviesNextId.size())
             {
-                availableId = allMoviesNextId.size()+1;
-//                return availableId;
-            } 
-            lastCounted = allMoviesNextId.get(i).getId();   
+                availableId = allMoviesNextId.size() + 1;
+                return availableId;
+            }
+            lastCounted = allMoviesNextId.get(i).getId();
         }
         return availableId;
     }
@@ -144,31 +151,36 @@ public class MovieDAO
      */
     public void deleteMovie(Movie movie) throws IOException
     {
-        File inputFile = new File("data/movie_titles.txt");
+        File inputFile = new File(MOVIE_SOURCE);
         File tempFile = new File("data/temp_titles.txt");
 
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-        
+
         Movie dMovie = movie;
         String dTitle = dMovie.getTitle();
         String dRelease = Integer.toString(dMovie.getYear());
         String dId = Integer.toString(dMovie.getId());
 
-        String lineToRemove = ""+dId+","+dRelease+","+dTitle;
+        String lineToRemove = "" + dId + "," + dRelease + "," + dTitle;
         String currentLine;
 
-        while((currentLine = reader.readLine()) != null) {
-    // trim newline when comparing with lineToRemove
-        String trimmedLine = currentLine.trim();
-        if(trimmedLine.equals(lineToRemove)) continue;
-        writer.write(currentLine + System.getProperty("line.separator"));
-}
-        writer.close(); 
-        reader.close(); 
-        
+        while ((currentLine = reader.readLine()) != null)
+        {
+            // trim newline when comparing with lineToRemove
+            String trimmedLine = currentLine.trim();
+            if (trimmedLine.equals(lineToRemove))
+            {
+                continue;
+            }
+            writer.write(currentLine + System.getProperty("line.separator"));
+        }
+        writer.close();
+        reader.close();
+
         inputFile.delete();
         tempFile.renameTo(inputFile);
+        sortMovies();
     }
 
     /**
@@ -177,18 +189,23 @@ public class MovieDAO
      *
      * @param movie The updated movie.
      */
-  public void updateMovie(Movie movie) throws IOException
+    public void updateMovie(Movie movie) throws IOException
     {
-            File tmp = new File("data/tmp_movies.txt");
+        File tmp = new File("data/tmp_movies.txt");
         List<Movie> allMovies = getAllMovies();
+        if (movie.getId() > allMovies.size())
+        {
+            System.out.println("The movie ID does not exist, make sure you are trying to update the right movie");
+            System.exit(0);
+        }
         allMovies.removeIf((Movie t) -> t.getId() == movie.getId());
         allMovies.add(movie);
         Collections.sort(allMovies, (Movie o1, Movie o2) -> Integer.compare(o1.getId(), o2.getId()));
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(tmp)))
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tmp)))
         {
             for (Movie mov : allMovies)
             {
-                bw.write(mov.getId()+","+mov.getYear()+","+mov.getTitle());
+                bw.write(mov.getId() + "," + mov.getYear() + "," + mov.getTitle());
                 bw.newLine();
             }
         }
@@ -202,10 +219,59 @@ public class MovieDAO
      * @param id ID of the movie.
      * @return A Movie object.
      */
-    private Movie getMovie(int id)
+    public Movie getMovie(int id) throws IOException
     {
-        //TODO Get one Movie
-        return null;
+        List<Movie> getMovieList = getAllMovies();
+        Movie getAMov = null;
+        for (Movie movie : getMovieList)
+        {
+            if (movie.getId() == id)
+            {
+                getAMov = new Movie(movie.getId(), movie.getYear(), movie.getTitle());
+            }
+        }
+        return getAMov;
+    }
+
+    /**
+     * Sorts the movie_titles.txt file so that the movie id's are always in an
+     * ascending order.
+     *
+     * @throws IOException
+     */
+    public void sortMovies() throws IOException
+    {
+        File tmp = new File("data/tmp.txt");
+        List<Movie> sortMList = getAllMovies();
+
+        Collections.sort(sortMList, Comparator.comparingInt(Movie::getId));
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tmp)))
+        {
+            for (Movie movie : sortMList)
+            {
+                bw.write(movieToString(movie));
+                bw.newLine();
+            }
+        }
+        Files.copy(tmp.toPath(), new File(MOVIE_SOURCE).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.delete(tmp.toPath());
+    }
+
+    /**
+     * Takes a movie object and converts its variables into string
+     *
+     * @param movie
+     * @return a string consisting of a movie object's id,releaseYear,title
+     */
+    public String movieToString(Movie movie)
+    {
+        Movie dMovie = movie;
+        String dTitle = dMovie.getTitle();
+        String dRelease = Integer.toString(dMovie.getYear());
+        String dId = Integer.toString(dMovie.getId());
+
+        String movieString = dId + "," + dRelease + "," + dTitle;
+        return movieString;
     }
 
 }
