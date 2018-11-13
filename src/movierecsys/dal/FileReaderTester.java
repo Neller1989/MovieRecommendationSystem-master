@@ -36,9 +36,9 @@ public class FileReaderTester
         MovieDAO movieDao = new MovieDAO();
 //        movieDao.createMovie(2222, "Test Movie");
 //        movieDao.createMovie(2223, "Virker vores");
-//        movieDao.createMovie(2224, "getNextAvailableId method?");       
+//        movieDao.createMovie(2224, "getNextAvailableId method?");     
+        movieDao.deleteMovie(new Movie(17769, 2003, "The Company"));
         List<Movie> allMovs = movieDao.getAllMovies();
-        movieDao.deleteMovie(new Movie(17773, 2224, "getNextAvailableId method?"));
 
         for (Movie allMov : allMovs)
         {
