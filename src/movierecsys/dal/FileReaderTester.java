@@ -35,12 +35,15 @@ public class FileReaderTester
     {
         MovieDAO movieDao = new MovieDAO();
         movieDao.createMovie(2222, "Test Movie");
+        movieDao.createMovie(2223, "Virker vores");
+        movieDao.createMovie(2224, "getNextAvailableId method?");       
         List<Movie> allMovs = movieDao.getAllMovies();
         for (Movie allMov : allMovs)
         {
             System.out.println(allMov.getTitle());
         }
-        System.out.println("Movie count: " + allMovs.size()+" "+movieDao.getAllMovies().size());
+        System.out.println("Movie count: " + allMovs.size());
+        System.out.println("next id " +movieDao.getNextAvailableId());
     }
     
    

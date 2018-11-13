@@ -88,9 +88,11 @@ public class MovieDAO
     public Movie createMovie(int releaseYear, String title) throws IOException
     {
         Path path = new File(MOVIE_SOURCE).toPath();
-        int id = 50000;
+        int id = -1;
         try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.SYNC, StandardOpenOption.APPEND, StandardOpenOption.WRITE))
         {
+            id = getNextAvailableId();
+            bw.newLine();
             bw.write(id+","+releaseYear + "," + title);
         }
         return new Movie(id, releaseYear, title);
@@ -99,32 +101,33 @@ public class MovieDAO
     /**
      * Gets the lowest available id from the movie source file.
      * @return lowest available id
+     * @throws java.io.IOException
      */
-//    public int getNextAvailableId()
-//    {
-//        int availableId = 0;
-//        int lastCounted = -1;
-//        
-//        
-//        
-//        for (int i = 0; i < members.size(); i++)
-//        {
-//            if (availableId != 0 && members.get(i).getId() == members.size() - 1)
-//            {
+    public int getNextAvailableId() throws IOException
+    {
+        int availableId = 1;
+        int lastCounted = 0;
+        
+        List<Movie> allMoviesNextId = getAllMovies();
+        
+        for (int i = 0; i < allMoviesNextId.size(); i++)
+        {
+            if (availableId != 1 && allMoviesNextId.get(i).getId() == allMoviesNextId.size() - 1)
+            {
+                return availableId;
+            } else if (availableId < allMoviesNextId.get(i).getId() && allMoviesNextId.get(i).getId() - 1 != lastCounted)
+            {
+                availableId = allMoviesNextId.get(i).getId() - 1;
+                return availableId;
+            } else if (availableId == 1 && allMoviesNextId.get(i).getId() == allMoviesNextId.size() - 1)
+            {
+                availableId = allMoviesNextId.size()+1;
 //                return availableId;
-//            } else if (availableId < members.get(i).getId() && members.get(i).getId() - 1 != lastCounted)
-//            {
-//                availableId = members.get(i).getId() - 1;
-//                return availableId;
-//            } else if (availableId == 0 && members.get(i).getId() == members.size() - 1)
-//            {
-//                availableId = members.size();
-//            } 
-//            lastCounted = members.get(i).getId();   
-//        }
-//        return availableId;
-//        return 123456;
-//    }
+            } 
+            lastCounted = allMoviesNextId.get(i).getId();   
+        }
+        return availableId;
+    }
 
     /**
      * Deletes a movie from the persistence storage.
