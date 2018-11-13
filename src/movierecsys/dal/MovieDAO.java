@@ -88,13 +88,12 @@ public class MovieDAO
     public Movie createMovie(int releaseYear, String title) throws IOException
     {
         Path path = new File(MOVIE_SOURCE).toPath();
-        int id = 1;
+        int id = 50000;
         try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.SYNC, StandardOpenOption.APPEND, StandardOpenOption.WRITE))
         {
-            bw.write(releaseYear + "," + title);
+            bw.write(id+","+releaseYear + "," + title);
         }
-        //TODO Create movie.
-        return Movie(id, releaseYear, title);
+        return new Movie(id, releaseYear, title);
     }
 
     /**
