@@ -9,8 +9,7 @@ package movierecsys.be;
  *
  * @author pgn
  */
-public class Rating
-{
+public class Rating {
 
     public static final int SUPER_BAD = -5;
     public static final int BAD = -3;
@@ -30,8 +29,7 @@ public class Rating
      * @param rating The value of the rating. Only the constants of the Rating
      * class are allowed values.
      */
-    public Rating(int movieId, int userId, int rating)
-    {
+    public Rating(int movieId, int userId, int rating) {
         this.movieId = movieId;
         this.userId = userId;
         this.rating = rating;
@@ -43,8 +41,7 @@ public class Rating
      *
      * @param rating The rating to set.
      */
-    public void setRating(int rating)
-    {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
@@ -53,8 +50,7 @@ public class Rating
      *
      * @return A movie
      */
-    public int getMovie()
-    {
+    public int getMovie() {
         return movieId;
     }
 
@@ -63,8 +59,7 @@ public class Rating
      *
      * @return A user.
      */
-    public int getUser()
-    {
+    public int getUser() {
         return userId;
     }
 
@@ -73,9 +68,13 @@ public class Rating
      *
      * @return An integer.
      */
-    public int getRating()
-    {
+    public int getRating() {
         return rating;
+    }
+
+    @Override
+    public String toString() {
+        return "MovieID: "+movieId+", UserID: "+userId+", Rating: "+rating;
     }
 
 }
