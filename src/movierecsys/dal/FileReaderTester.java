@@ -32,11 +32,11 @@ public class FileReaderTester
 //        ratingDAO.createRating(new Rating(17769, 123456, 5));
 //        ratingDAO.getAllRatings();
 //        
-        ratingDAO.updateRating(new Rating(8,1744889,-3));
-        List<Rating> testrating = ratingDAO.getRatings(new User(1744889,"test"));
-        for (Rating rating : testrating) {
-            System.out.println(rating.toString());
-        }
+//        ratingDAO.updateRating(new Rating(8,1744889,-3));
+//        List<Rating> testrating = ratingDAO.getRatings(new User(1744889,"test"));
+//        for (Rating rating : testrating) {
+//            System.out.println(rating.toString());
+//        }
 //        System.out.println(ratingDAO.getRatings(new User(123456,"test")));
 //       List<User> allUse = userDAO.getAllUsers();
 //       userDAO.createUser("TestUser");
@@ -46,8 +46,8 @@ public class FileReaderTester
 //        for (User user : allUse) {
 //            System.out.println(user.toString());
 //        }
-//        System.out.println("Movie count: " + allUse.size());
-//        System.out.println("next id " +userDAO.getNextAvailableUserId());
+//        System.out.println("User count: " + allUse.size());
+//        System.out.println("next user id " +userDAO.getNextAvailableUserId());
 //       System.out.println("Specific user request: "+userDAO.getUser(2649120));
 //        List<Movie> allMovs = movieDao.getAllMovies();
 //
